@@ -1,0 +1,14 @@
+[
+  {
+    "path": "plugin-a",
+    "location": "plugin-a.umd.js",
+    "description": "Plugin A",
+    "moduleName": "PluginAModule"
+  },
+  {
+    "path": "plugin-b",
+    "location": "plugin-b.umd.js",
+    "description": "Plugin B",
+    "moduleName": "PluginBModule"
+  }
+]
