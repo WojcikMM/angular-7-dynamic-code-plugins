@@ -1,0 +1,5 @@
+angular-plugin-dynamic-routing/node_modules
+angular-plugin-dynamic-routing/dist
+external-plugins/node_modules
+plugins/dist
+.idea
