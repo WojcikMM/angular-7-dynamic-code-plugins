@@ -34,6 +34,7 @@
      * @fileoverview added by tsickle
      * @suppress {checkTypes,constantProperty,extraRequire,missingOverride,missingReturn,unusedPrivateMembers,uselessCode} checked by tsc
      */
+    var ɵ0 = PluginAComponent;
     var PluginAModule = /** @class */ (function () {
         function PluginAModule() {
         }
@@ -47,6 +48,11 @@
                                 }
                             ])
                         ],
+                        entryComponents: [PluginAComponent],
+                        providers: [{
+                                provide: 'plugin-a',
+                                useValue: ɵ0
+                            }],
                         exports: [PluginAComponent]
                     },] }
         ];

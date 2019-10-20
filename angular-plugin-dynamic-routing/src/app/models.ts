@@ -9,3 +9,7 @@ export interface PluginConfigModel {
     moduleName: string;
     description: string;
 }
+
+export interface PluginConfigModelForInject extends PluginConfigModel {
+    componentToInjectName: string;
+}

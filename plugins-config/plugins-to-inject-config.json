@@ -1,0 +1,9 @@
+[
+  {
+    "path": "plugin-a",
+    "location": "plugin-a.umd.js",
+    "description": "Plugin A",
+    "moduleName": "PluginAModule",
+    "componentToInjectName": "plugin-a"
+  }
+]

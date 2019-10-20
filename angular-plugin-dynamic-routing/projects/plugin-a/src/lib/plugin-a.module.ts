@@ -13,6 +13,11 @@ import {RouterModule} from '@angular/router';
       }
     ])
   ],
+  entryComponents: [PluginAComponent],
+  providers: [{
+    provide: 'plugin-a',
+    useValue: PluginAComponent
+  }],
   exports: [PluginAComponent]
 })
 export class PluginAModule { }

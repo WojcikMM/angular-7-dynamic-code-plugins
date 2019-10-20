@@ -1,11 +1,15 @@
-import {Compiler, Injectable} from '@angular/core';
+import {Compiler, ComponentFactory, Injectable, Injector} from '@angular/core';
 import {Observable, Subscriber, zip} from 'rxjs';
 import {HttpClient} from '@angular/common/http';
 import {System} from 'systemjs';
 import {environment} from '../../environments/environment';
 import {fromPromise} from 'rxjs/internal-compatibility';
-import {flatMap} from 'rxjs/operators';
-import {CompiledPluginModel, PluginConfigModel} from '../models';
+import {flatMap, map} from 'rxjs/operators';
+import {
+    CompiledPluginModel,
+    PluginConfigModel,
+    PluginConfigModelForInject
+} from '../models';
 
 // Needed for the new modules
 import * as AngularCore from '@angular/core';
@@ -20,7 +24,7 @@ declare const SystemJS: System;
 @Injectable()
 export class ModuleService {
 
-    constructor(private compiler: Compiler, private http: HttpClient) {
+    constructor(private compiler: Compiler, private http: HttpClient, private injector: Injector) {
         SystemJS.set('@angular/core', SystemJS.newModule(AngularCore));
         SystemJS.set('@angular/common', SystemJS.newModule(AngularCommon));
         SystemJS.set('@angular/router', SystemJS.newModule(AngularRouter));
@@ -35,6 +39,14 @@ export class ModuleService {
     getCompiledPlugins(): Observable<CompiledPluginModel[]> {
         return this.http.get<Array<PluginConfigModel>>(environment.plugin_config_url).pipe(
             flatMap(plugins => zip(...plugins.map(plugin => this._loadModuleSystemJS(plugin))))
+        );
+    }
+
+    getCompiledPluginToInject(pluginName: string): Observable<ComponentFactory<any>> {
+        return this.http.get<Array<PluginConfigModelForInject>>(environment.plugins_to_inject_config_url).pipe(
+            map(plugins => plugins.find(plugin => plugin.componentToInjectName
+                === pluginName)),
+            flatMap((plugin: PluginConfigModelForInject) => this._loadModuleAndCreateFactoryFromSystemJS(plugin))
         );
     }
 
@@ -53,6 +65,29 @@ export class ModuleService {
                     pluginInfo: moduleInfo,
                     pluginModule: module
                 });
+                subscriber.complete();
+            });
+        });
+    }
+
+    /**
+     * Function that imports an external plugin and creates appropriate factories for it
+     * @param moduleInfo information about the plugin to be imported
+     */
+    private _loadModuleAndCreateFactoryFromSystemJS(moduleInfo: PluginConfigModelForInject): Observable<ComponentFactory<any>> {
+        const url: string = environment.plugins_repository_url + moduleInfo.location;
+
+        return new Observable<ComponentFactory<any>>((subscriber: Subscriber<ComponentFactory<any>>) => {
+            fromPromise(SystemJS.import(url)).subscribe(module => {
+                const moduleFactory = this.compiler.compileModuleSync(module[`${moduleInfo.moduleName}`]);
+                console.log(moduleFactory);
+                const moduleRef = moduleFactory.create(this.injector);
+                console.log(moduleRef);
+                const componentProvider = moduleRef.injector.get(moduleInfo.componentToInjectName);
+                console.log(componentProvider);
+                const componentFactory = moduleRef.componentFactoryResolver.resolveComponentFactory(componentProvider);
+
+                subscriber.next(componentFactory);
                 subscriber.complete();
             });
         });
