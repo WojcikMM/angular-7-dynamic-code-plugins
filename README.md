@@ -32,4 +32,13 @@ Knowing only the name of the "Plugin" compressed file and the name of the main M
 10 For external plugins do the same as in points 4-7 but start from `external-plugins` directory.
 
 ## Configuration and steps for plugin current component injection
-__--=== TO BE CONTINUED IN FUTURE ===--__
+1. Checkout to feature-injecting-plugin-component` branch.
+
+2. Run command (still on `root` directory) `ng build plugin-a`
+3. copy bundled file `dist/plugin-a/bundles/plugin-a.umd.js` to `plugins-config/plugins` directory
+
+4. Go to directory `plugins-config`
+5. Run command `http-server -p 8080 --cors`
+
+7. Go to directory `root`
+8. Run command `ng serve`
