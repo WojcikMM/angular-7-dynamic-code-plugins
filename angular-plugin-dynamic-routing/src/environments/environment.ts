@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   plugin_config_url: 'http://localhost:8080/config.json',
+  plugins_to_inject_config_url: 'http://localhost:8080/plugins-to-inject-config.json',
   plugins_repository_url: 'http://localhost:8080/plugins/'
 };
 
